@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 High-Performance Pokédex | Next.js 16 & Clean Architecture
 
-## Getting Started
+Una Pokédex de nivel de producción construida con las tecnologías web más vanguardistas, diseñada bajo principios de **Clean Architecture** para garantizar desacoplamiento total, escalabilidad y un rendimiento óptimo de renderizado del lado del servidor.
 
-First, run the development server:
+Este proyecto sirve como una pieza de portafolio de ingeniería de software que demuestra el manejo avanzado de Server Components, tipado estricto sin dependencias de estado de terceros y optimizaciones de Core Web Vitals.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠️ Stack Tecnológico
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Framework:** Next.js 16 (App Router)
+- **Librería Core:** React 19 (Hooks nativos y Server Components por defecto)
+- **Estilos:** Tailwind CSS v4 (Sintaxis moderna de CSS nativo de alta velocidad)
+- **Lenguaje:** TypeScript 5+ (Tipado estricto e inferencia avanzada)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📐 Decisiones de Arquitectura (Clean Architecture)
 
-## Learn More
+Para evitar el acoplamiento monolítico tradicional, la aplicación se divide en capas bien delimitadas con responsabilidades aisladas:
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Capa de Dominio (`/types`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Define modelos de datos y contratos puros de TypeScript basados estrictamente en esquemas OpenAPI.
+- Completamente agnóstica a frameworks o UI; no importa nada ajeno a tipos de datos esenciales.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 2. Capa de Infraestructura y Datos (`/lib`)
 
-## Deploy on Vercel
+- Centralizada en `lib/pokeapi.ts`. Abstrae la comunicación externa de la PokeAPI mediante funciones puras asíncronas.
+- Saca partido del **fetch nativo de Next.js** para inyectar estrategias automáticas de almacenamiento en caché (_Data Caching_) y revalidación de datos en el servidor Node.js.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Capa de Presentación (`/app` y `/components`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Server Components (Por Defecto):** Las vistas principales (`/` y `/pokemon/[name]`) se resuelven en el servidor. Esto reduce a cero el JavaScript enviado al cliente para el renderizado inicial, mejorando drásticamente el FCP (First Contentful Paint) y el SEO.
+- **Client Components Aislados (`"use client"`):** La interactividad crítica (filtros y barras de búsqueda en tiempo real) se delega a hojas de componente atómicas de baja jerarquía. El estado se sincroniza directamente mediante `URLSearchParams`, permitiendo enlaces 100% compartibles y persistentes.
+
+---
+
+## ⚡ Optimizaciones Destacadas
+
+- **Cero Cumulative Layout Shift (CLS):** Control de renderizado de sprites externos de alta resolución (`sprites.other['official-artwork']`) utilizando dimensiones explícitas a través de las capacidades del componente optimizado `next/image`.
+- **Eliminación de Cuellos de Botella (Waterfalls):** En la pantalla de detalle dinámico, los flujos asíncronos concurrentes (especies, estadísticas y cadenas evolutivas) se resuelven de forma paralela mediante `Promise.all`.
+- **Automatización de Procesos:** Cumplimiento estricto de control de versiones semánticas y bitácora de cambios detallada bajo los estándares internacionales de _Keep a Changelog v1.1.0_.
+
+---
+
+## ⚙️ Configuración Local
+
+1. Clona el repositorio e instala sus dependencias:
+   ```bash
+   npm install
+   ```
