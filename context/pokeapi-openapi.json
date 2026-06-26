@@ -1,0 +1,364 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PokeAPI Subset Specification",
+    "description": "Una especificación OpenAPI simplificada y optimizada para consumir los endpoints más relevantes de PokéAPI en un proyecto de Next.js (Pokédex).",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://pokeapi.co/api/v2",
+      "description": "Servidor oficial de PokeAPI"
+    }
+  ],
+  "paths": {
+    "/pokemon": {
+      "get": {
+        "summary": "Obtener lista paginada de Pokémon",
+        "description": "Devuelve un listado con nombres y URLs de referencia para cada Pokémon según los parámetros de paginación.",
+        "operationId": "getPokemonList",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Cantidad máxima de resultados a retornar en la página.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Desplazamiento o punto de partida para la paginación.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de Pokémon obtenida exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PokemonListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pokemon/{nameOrId}": {
+      "get": {
+        "summary": "Obtener detalle completo de un Pokémon",
+        "description": "Devuelve toda la información detallada de un Pokémon específico buscando por su nombre o su identificador numérico (ID). Incluye estadísticas, tipos, habilidades e imágenes.",
+        "operationId": "getPokemonByNameOrId",
+        "parameters": [
+          {
+            "name": "nameOrId",
+            "in": "path",
+            "description": "El nombre exacto o el ID numérico del Pokémon.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalle del Pokémon obtenido con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PokemonDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pokémon no encontrado."
+          }
+        }
+      }
+    },
+    "/pokemon-species/{nameOrId}": {
+      "get": {
+        "summary": "Obtener la especie de un Pokémon",
+        "description": "Devuelve metadatos sobre la especie del Pokémon, lo cual es fundamental para encontrar textos descriptivos (flavor text) y la URL hacia la cadena evolutiva.",
+        "operationId": "getPokemonSpecies",
+        "parameters": [
+          {
+            "name": "nameOrId",
+            "in": "path",
+            "description": "Nombre o ID del Pokémon.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Datos de la especie obtenidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PokemonSpecies"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evolution-chain/{id}": {
+      "get": {
+        "summary": "Obtener la cadena de evolución",
+        "description": "Devuelve la estructura de evoluciones completa para una familia específica de Pokémon.",
+        "operationId": "getEvolutionChain",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "El identificador de la cadena de evolución obtenido desde el endpoint de la especie.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cadena de evolución obtenida con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvolutionChain"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NamedAPIResource": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nombre del recurso."
+          },
+          "url": {
+            "type": "string",
+            "description": "URL absoluta para consultar los detalles del recurso."
+          }
+        }
+      },
+      "PokemonListResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "Total de recursos existentes en PokeAPI para este endpoint."
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL para la siguiente página de resultados."
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL para la página anterior de resultados."
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NamedAPIResource"
+            }
+          }
+        }
+      },
+      "PokemonDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Identificador numérico único del Pokémon."
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre del Pokémon."
+          },
+          "base_experience": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer",
+            "description": "Altura del Pokémon en decímetros."
+          },
+          "weight": {
+            "type": "integer",
+            "description": "Peso del Pokémon en hectogramos."
+          },
+          "sprites": {
+            "type": "object",
+            "properties": {
+              "front_default": {
+                "type": "string",
+                "nullable": true
+              },
+              "other": {
+                "type": "object",
+                "properties": {
+                  "official-artwork": {
+                    "type": "object",
+                    "properties": {
+                      "front_default": {
+                        "type": "string",
+                        "description": "Imagen en alta resolución perfecta para las tarjetas de la interfaz."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slot": {
+                  "type": "integer"
+                },
+                "type": {
+                  "$ref": "#/components/schemas/NamedAPIResource"
+                }
+              }
+            }
+          },
+          "stats": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "base_stat": {
+                  "type": "integer",
+                  "description": "Valor base del stat."
+                },
+                "effort": {
+                  "type": "integer"
+                },
+                "stat": {
+                  "$ref": "#/components/schemas/NamedAPIResource"
+                }
+              }
+            }
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "is_hidden": {
+                  "type": "boolean"
+                },
+                "slot": {
+                  "type": "integer"
+                },
+                "ability": {
+                  "$ref": "#/components/schemas/NamedAPIResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PokemonSpecies": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "evolution_chain": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "URL que contiene el ID de la cadena evolutiva para consultar el endpoint `/evolution-chain/{id}`."
+              }
+            }
+          },
+          "flavor_text_entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "flavor_text": {
+                  "type": "string",
+                  "description": "Texto descriptivo o de ambiente del Pokémon."
+                },
+                "language": {
+                  "$ref": "#/components/schemas/NamedAPIResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "EvolutionChain": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "chain": {
+            "$ref": "#/components/schemas/ChainLink"
+          }
+        }
+      },
+      "ChainLink": {
+        "type": "object",
+        "properties": {
+          "is_baby": {
+            "type": "boolean"
+          },
+          "species": {
+            "$ref": "#/components/schemas/NamedAPIResource"
+          },
+          "evolution_details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "min_level": {
+                  "type": "integer",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          "evolves_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainLink"
+            },
+            "description": "Sub-evoluciones sucesivas dentro de la misma cadena biológica."
+          }
+        }
+      }
+    }
+  }
+}
