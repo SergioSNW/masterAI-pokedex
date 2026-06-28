@@ -1,50 +1,46 @@
 # 🚀 High-Performance Pokédex | Next.js 16 & Clean Architecture
 
-Una Pokédex de nivel de producción construida con las tecnologías web más vanguardistas, diseñada bajo principios de **Clean Architecture** para garantizar desacoplamiento total, escalabilidad y un rendimiento óptimo de renderizado del lado del servidor.
+A production-grade Pokédex application built with cutting-edge web technologies. Architected using **Clean Architecture** principles, this project ensures complete decoupling, high scalability, and optimized Server-Side Rendering (SSR) performance.
 
-Este proyecto sirve como una pieza de portafolio de ingeniería de software que demuestra el manejo avanzado de Server Components, tipado estricto sin dependencias de estado de terceros y optimizaciones de Core Web Vitals.
+This project serves as a software engineering portfolio piece demonstrating advanced proficiency in React Server Components, state management without third-party dependencies, and Core Web Vitals optimization.
 
-## 🛠️ Stack Tecnológico
+## 🛠️ Tech Stack
 
 - **Framework:** Next.js 16 (App Router)
-- **Librería Core:** React 19 (Hooks nativos y Server Components por defecto)
-- **Estilos:** Tailwind CSS v4 (Sintaxis moderna de CSS nativo de alta velocidad)
-- **Lenguaje:** TypeScript 5+ (Tipado estricto e inferencia avanzada)
+- **Core Library:** React 19 (Native Hooks & Server Components)
+- **Styling:** Tailwind CSS v4 (Modern, high-performance native CSS syntax)
+- **Language:** TypeScript 5+ (Strict typing & advanced inference)
 
 ---
 
-## 📐 Decisiones de Arquitectura (Clean Architecture)
+## 📐 Architectural Design (Clean Architecture)
 
-Para evitar el acoplamiento monolítico tradicional, la aplicación se divide en capas bien delimitadas con responsabilidades aisladas:
+To avoid traditional monolithic coupling, the application is organized into isolated layers with clear responsibilities:
 
-### 1. Capa de Dominio (`/types`)
+### 1. Domain Layer (`/types`)
+- Defines data models and strict TypeScript contracts based on OpenAPI schemas.
+- Completely framework-agnostic; contains no dependencies beyond essential data structures.
 
-- Define modelos de datos y contratos puros de TypeScript basados estrictamente en esquemas OpenAPI.
-- Completamente agnóstica a frameworks o UI; no importa nada ajeno a tipos de datos esenciales.
+### 2. Infrastructure & Data Layer (`/lib`)
+- Centralized in `lib/pokeapi.ts`. Abstracts external PokeAPI communication via pure asynchronous functions.
+- Leverages **Next.js native fetch** to implement automated Data Caching and revalidation strategies within the Node.js server environment.
 
-### 2. Capa de Infraestructura y Datos (`/lib`)
-
-- Centralizada en `lib/pokeapi.ts`. Abstrae la comunicación externa de la PokeAPI mediante funciones puras asíncronas.
-- Saca partido del **fetch nativo de Next.js** para inyectar estrategias automáticas de almacenamiento en caché (_Data Caching_) y revalidación de datos en el servidor Node.js.
-
-### 3. Capa de Presentación (`/app` y `/components`)
-
-- **Server Components (Por Defecto):** Las vistas principales (`/` y `/pokemon/[name]`) se resuelven en el servidor. Esto reduce a cero el JavaScript enviado al cliente para el renderizado inicial, mejorando drásticamente el FCP (First Contentful Paint) y el SEO.
-- **Client Components Aislados (`"use client"`):** La interactividad crítica (filtros y barras de búsqueda en tiempo real) se delega a hojas de componente atómicas de baja jerarquía. El estado se sincroniza directamente mediante `URLSearchParams`, permitiendo enlaces 100% compartibles y persistentes.
+### 3. Presentation Layer (`/app` & `/components`)
+- **Server Components (Default):** Core views (`/` and `/pokemon/[name]`) are resolved server-side. This reduces client-side JavaScript to near-zero for initial rendering, drastically improving FCP (First Contentful Paint) and SEO performance.
+- **Atomic Client Components (`"use client"`):** Critical interactivity (real-time filtering and search) is delegated to low-level atomic components. State is synchronized directly via `URLSearchParams`, ensuring 100% shareable and persistent deep-linking.
 
 ---
 
-## ⚡ Optimizaciones Destacadas
+## ⚡ Engineering Highlights
 
-- **Cero Cumulative Layout Shift (CLS):** Control de renderizado de sprites externos de alta resolución (`sprites.other['official-artwork']`) utilizando dimensiones explícitas a través de las capacidades del componente optimizado `next/image`.
-- **Eliminación de Cuellos de Botella (Waterfalls):** En la pantalla de detalle dinámico, los flujos asíncronos concurrentes (especies, estadísticas y cadenas evolutivas) se resuelven de forma paralela mediante `Promise.all`.
-- **Automatización de Procesos:** Cumplimiento estricto de control de versiones semánticas y bitácora de cambios detallada bajo los estándares internacionales de _Keep a Changelog v1.1.0_.
+- **Cumulative Layout Shift (CLS) Mitigation:** Implemented precise dimension controls for external high-resolution sprites (`official-artwork`) using optimized `next/image` capabilities.
+- **Waterfall Optimization:** Resolved dynamic detail page bottlenecks by executing concurrent asynchronous flows (species data, stats, and evolution chains) in parallel using `Promise.all`.
+- **Standardized Versioning:** Adheres to Semantic Versioning and maintains a detailed `CHANGELOG.md` following [Keep a Changelog v1.1.0](https://keepachangelog.com/en/1.1.0/) standards.
 
 ---
 
-## ⚙️ Configuración Local
+## ⚙️ Getting Started
 
-1. Clona el repositorio e instala sus dependencias:
+1. Clone the repository and install dependencies:
    ```bash
    npm install
-   ```
