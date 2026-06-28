@@ -1,22 +1,22 @@
-import Image from "next/image";
-import Link from "next/link";
-import type { PokemonDetail } from "@/types/pokemon";
-import { TypeBadge } from "./TypeBadge";
+import Image from 'next/image';
+import Link from 'next/link';
+import type { PokemonDetail } from '@/types/pokemon';
+import { TypeBadge } from './TypeBadge';
 
 interface PokemonCardProps {
   pokemon: PokemonDetail;
 }
 
 function formatPokemonId(id: number): string {
-  return `#${String(id).padStart(3, "0")}`;
+  return `#${String(id).padStart(3, '0')}`;
 }
 
 function formatPokemonName(name: string): string {
-  return name.replaceAll("-", " ");
+  return name.replaceAll('-', ' ');
 }
 
 export function PokemonCard({ pokemon }: PokemonCardProps) {
-  const artwork = pokemon.sprites.other["official-artwork"].front_default;
+  const artwork = pokemon.sprites.other['official-artwork'].front_default;
 
   return (
     <Link
